@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+  <meta charset="UTF-8">
+  <title>Обучение Fullstack</title>
+  </head>
+<body>
+  <header>
+    <h1>Наш путь Fullstack-разработки</h1>
+  </header>
+
+  <main>
+    <section id="content">
+      <p>Самый простой сайт , но дальше больше</p>
+    </section>
+    <section>
+      <button id="next-step">Следующий этап</button>
+      <button id="theme-toggle" style="display: none;">Переключить тему</button>
+    </section>
+  </main>
+
+  <script>
+    const steps = [
+      { type: "css", path: "2-css.css" },
+      { type: "js", path: "3js.js" },
+      { type: "js", path: "4-git.js" },
+      { type: "js", path: "5-framework.js" },
+      { type: "js", path: "6-state.js" },
+      { type: "js", path: "7-node.js" },
+      { type: "js", path: "8-db.js" },
+      { type: "js", path: "9-api.js" },
+      { type: "js", path: "10-auth.js" },
+      { type: "js", path: "11-tests.js" },
+      { type: "js", path: "12-typescript.js" },
+      { type: "js", path: "13-devops.js" },
+      { type: "js", path: "14-optimize.js" }
+    ];
+
+    
+  let currentStep = 0;
+const btn = document.getElementById("next-step");
+
+const loadDependency = (url) => {
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.onload = resolve;
+    document.head.appendChild(script);
+  });
+};
+
+btn.addEventListener("click", async () => {
+  if (currentStep >= steps.length) {
+    btn.textContent = "Это последний этап";
+    btn.disabled = true;
+    return;
+  }
+
+  const step = steps[currentStep];
+  
+  try {
+    // Загрузка React для соответствующих этапов
+    if (step.path.includes('framework') || step.path.includes('state')) {
+      await loadDependency("https://unpkg.com/react@18/umd/react.development.js");
+      await loadDependency("https://unpkg.com/react-dom@18/umd/react-dom.development.js");
+    }
+
+    const element = document.createElement(step.type === "css" ? "link" : "script");
+    
+    if (step.type === "css") {
+      element.rel = "stylesheet";
+      element.href = step.path;
+    } else {
+      element.src = step.path;
+    }
+
+    await new Promise((resolve) => {
+      element.onload = resolve;
+      element.onerror = () => {
+        console.error(`Ошибка загрузки ${step.path}`);
+        resolve(); // Продолжаем несмотря на ошибки
+      };
+      document.head.appendChild(element);
+    });
+
+    currentStep++;
+    if (currentStep === steps.length) {
+      btn.textContent = "Это последний этап";
+      btn.disabled = true;
+    }
+  } catch (err) {
+    console.error(`Ошибка на шаге ${step.path}:`, err);
+  }
+});
+  </script>
+</body>
+</html>
